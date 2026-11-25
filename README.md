@@ -26,6 +26,8 @@
 
 ```
 AGENTS.md        AIとメンバー向けのルール（最初に読む）
+CLAUDE.md        Claude Code 用（AGENTS.md を読み込む）
+GEMINI.md        Gemini CLI 用（AGENTS.md を読み込む）
 docs/guide.md    はじめてガイド：作業の流れと用語
 docs/db.md       データベースのテーブル定義
 docs/api.md      画面とサーバー間の取り決め
