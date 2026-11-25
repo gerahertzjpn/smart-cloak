@@ -8,3 +8,4 @@ backend/test
 docs
 *.md
 infra
+Makefile
