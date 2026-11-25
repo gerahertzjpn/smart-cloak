@@ -12,6 +12,9 @@ COPY backend/src backend/src
 COPY frontend frontend
 COPY db db
 
+# DB_HOST / PHOTO_BUCKET がないとき（CI の起動確認）に使うローカル保存先
+RUN mkdir -p backend/.data && chown node:node backend/.data
+
 USER node
 EXPOSE 8080
 CMD ["node", "backend/src/server.js"]
