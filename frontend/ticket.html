@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>お荷物の引換券｜LUGGAGE CLOAK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body { display: grid; place-items: center; padding: 24px 16px; }
+    .ticket { width: 100%; max-width: 380px; text-align: center; border-top: 4px solid var(--gold); background: var(--panel); border-radius: var(--radius); padding: 28px 24px; }
+    .ticket .name { font-family: var(--display); font-size: 26px; letter-spacing: 0.18em; color: var(--gold); }
+    .ticket .sub { font-size: 11px; letter-spacing: 0.3em; color: var(--muted); margin-bottom: 22px; }
+    .ticket .guest { font-family: var(--serif); font-size: 22px; margin: 0 0 4px; }
+    .ticket .qr { background: #fff; border-radius: var(--radius); padding: 16px; margin: 20px auto; width: 260px; max-width: 100%; }
+    .ticket .done { font-family: var(--serif); font-size: 20px; color: var(--ok); margin: 24px 0; }
+  </style>
+</head>
+<body>
+  <div class="ticket" id="ticket">
+    <div class="name">LUGGAGE CLOAK</div>
+    <div class="sub">お荷物の引換券</div>
+    <div id="content" class="muted">読み込み中…</div>
+  </div>
+  <script type="module" src="/js/ticket.js"></script>
+</body>
+</html>

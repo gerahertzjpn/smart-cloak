@@ -18,3 +18,6 @@ build/
 Thumbs.db
 .vscode/
 .idea/
+
+# ローカル実行のデータ（DB・写真）
+backend/.data/

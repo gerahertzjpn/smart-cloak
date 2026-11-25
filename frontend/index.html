@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>メニュー｜LUGGAGE CLOAK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header id="app-header"></header>
+  <main>
+    <h1 class="page-title">メニュー</h1>
+    <p class="page-lead">はじめに右上の「担当スタッフ」と「イベント」を選んでください。</p>
+
+    <div class="menu">
+      <a href="/checkin.html">
+        <div class="icon">🧳</div>
+        <h2>お預かり</h2>
+        <p>お客様情報の入力・荷物の撮影・棚の割り当て・引換券とタグの発行</p>
+      </a>
+      <a href="/checkout.html">
+        <div class="icon">✅</div>
+        <h2>お引き取り</h2>
+        <p>引換券QRの読み取り・荷物タグの照合・お渡し</p>
+      </a>
+      <a href="/shelves.html">
+        <div class="icon">🗄️</div>
+        <h2>棚の状況</h2>
+        <p>空き棚の確認・保管中の荷物を写真で探す（タグ脱落時）</p>
+      </a>
+    </div>
+
+    <div class="grid-2">
+      <section class="panel">
+        <div class="section-head"><h2>イベントの登録</h2><span class="rule"></span></div>
+        <form id="event-form">
+          <div class="field">
+            <label for="ev-name">イベント名</label>
+            <input id="ev-name" type="text" required placeholder="例：山田家・佐藤家 披露宴">
+          </div>
+          <div class="field">
+            <label for="ev-venue">会場</label>
+            <input id="ev-venue" type="text" placeholder="例：鳳凰の間">
+          </div>
+          <div class="field">
+            <label for="ev-start">開始日時</label>
+            <input id="ev-start" type="datetime-local" required>
+          </div>
+          <button class="btn btn-primary" type="submit">登録する</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><h2>システムの状態</h2><span class="rule"></span></div>
+        <dl id="status" class="muted"></dl>
+      </section>
+    </div>
+  </main>
+  <script type="module" src="/js/index.js"></script>
+</body>
+</html>

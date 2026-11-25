@@ -22,6 +22,28 @@
 
 > **初めての人は、まず [docs/guide.md](docs/guide.md)（はじめてガイド）を読んでください。**
 
+## 自分のPCで動かす（プロトタイプ）
+
+必要なもの：[Node.js](https://nodejs.org/ja)（22 以上）だけ。DB のインストールは不要です。
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+ブラウザで http://localhost:8080 を開きます。右上で「担当スタッフ」を選んでから使ってください。
+
+| 画面         | できること                                                     |
+|--------------|----------------------------------------------------------------|
+| お預かり     | お客様情報 → 荷物を撮影して追加 → 確定（空き棚を自動割り当て）→ 引換券QR・タグ印刷 |
+| お引き取り   | 引換券QRを読み取り → 荷物の写真と棚を表示 → タグで照合 → お渡し |
+| 棚の状況     | 棚ごとの空き状況、保管中の荷物を写真で探す（タグ脱落時）       |
+
+- ハンドスキャナーがなくても、QRの中身（コード）を入力欄に貼り付けて Enter で試せます。
+- 自分のPCでは、DB は PC内の PGlite、写真は `backend/.data/` に保存されます。メールは送信しません。
+- クラウド（Cloud Run・Cloud SQL・Cloud Storage）での動かし方は [docs/deploy.md](docs/deploy.md)。
+
 ## リポジトリ構成
 
 ```
@@ -31,19 +53,24 @@ GEMINI.md        Google Antigravity（Gemini）用の案内
 docs/guide.md    はじめてガイド：作業の流れと用語
 docs/db.md       データベースのテーブル定義
 docs/api.md      画面とサーバー間の取り決め
+docs/deploy.md   Google Cloud へのデプロイ手順
 db/migrations/   DBスキーマの変更履歴（001, 002, ...）
-db/seed.sql      テストデータ
+db/seed.sql      マスタデータ（スタッフ・荷物の種類・棚）
+db/seed_test.sql テスト用のお客様データ
 db/tests/        DBの自動チェック
-db/queries.sql   サーバー向けの主要クエリ例
-backend/         サーバー
-frontend/        画面
+db/queries.sql   主要クエリの例
+backend/         サーバー（Node.js + Express）
+frontend/        画面（HTML / CSS / JavaScript）
+Dockerfile       Cloud Run 用のコンテナ
 ```
 
 ## インフラ
 
-- Google Cloud（プロジェクト `project-pjwork12-ai07ae`）
+- Google Cloud（プロジェクト `project-pjwork12-ai07ae`、東京リージョン）
+- サーバーと画面：Cloud Run
 - データベース：Cloud SQL for PostgreSQL
 - 写真：Cloud Storage
+- パスワード類：Secret Manager
 
 ## チームでの作業の流れ
 

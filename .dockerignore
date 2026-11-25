@@ -1,0 +1,11 @@
+.git
+.github
+.claude
+**/node_modules
+backend/.data
+backend/.env
+backend/test
+docs
+*.md
+infra
+Makefile

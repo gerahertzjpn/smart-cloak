@@ -66,7 +66,7 @@ Pull Request または Issue に「何が必要か・誰に依頼するか」を
 - `DROP TABLE`、`DROP COLUMN`、`TRUNCATE` は、DB担当の明確な同意なしに書かない。
 - レコードは削除しない。お預かりや荷物は `status` を変更する。
 - スキーマを変更したら `docs/db.md` を更新し、必要に応じて
-  `db/seed.sql` と `db/tests/smoke.sql` も更新する。
+  `db/seed.sql`（マスタ）、`db/seed_test.sql`（テスト用のお客様）、`db/tests/smoke.sql` も更新する。
 
 ## サーバーのルール
 
@@ -76,7 +76,17 @@ Pull Request または Issue に「何が必要か・誰に依頼するか」を
 - QRのトークン（`ticket_token`、`tag_token`）はDBが発行するUUID。
   番号・氏名・メールアドレスに置き換えない。
 - 空き棚の割り当ては `FOR UPDATE` を使い、1つのトランザクション内で行う
-  （例：`db/queries.sql`）。
+  （実装：`backend/src/api.js` の `pickLocation`）。
+- 自分のPCでは DB に PGlite（PC内で動く PostgreSQL）を使う。マイグレーションは起動時に自動で適用される。
+  Cloud SQL へのマイグレーション適用は DB担当が行う（`docs/deploy.md`）。
+- `backend/` を変更したら `cd backend && npm test` が通ることを確認する。
+- API を追加・変更したら、`docs/api.md` と `backend/test/api.test.js` も更新する。
+
+## 画面のルール
+
+- 画面の文言は日本語。スタッフが迷わないよう、短く具体的に書く（例：「タグを読み取ってください」）。
+- ユーザーが入力した文字を HTML に入れるときは、必ず `esc()`（`frontend/js/common.js`）を通す。
+- サーバーとのやり取りは `api()`（`frontend/js/common.js`）を使う。
 
 ## 秘密情報
 

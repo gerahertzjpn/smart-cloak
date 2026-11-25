@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>お引き取り｜LUGGAGE CLOAK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header id="app-header"></header>
+  <main>
+    <ol class="steps" id="steps">
+      <li data-step="1"><b>1</b>引換券QRを読み取る</li>
+      <li data-step="2"><b>2</b>棚から荷物を出す</li>
+      <li data-step="3"><b>3</b>荷物のタグを読み取る</li>
+      <li data-step="4"><b>4</b>お渡し</li>
+    </ol>
+
+    <!-- 1. 引換券の読み取り -->
+    <section id="scan-ticket" class="section">
+      <div class="section-head"><span class="num">I.</span><h2>引換券の読み取り</h2><span class="rule"></span></div>
+      <input id="ticket-input" class="scan-input" type="text" autocomplete="off"
+             placeholder="お客様のスマートフォンのQRをスキャナーで読み取ってください">
+      <p class="muted center" style="font-size:13px">スキャナーがない場合は、引換券のURLまたはコードを貼り付けて Enter</p>
+
+      <details class="panel mt">
+        <summary>QRを表示できないお客様（お名前で検索）</summary>
+        <form id="name-search" class="actions mt">
+          <input id="name-input" type="search" placeholder="お名前の一部" style="flex:1;min-width:200px">
+          <button class="btn" type="submit">検索</button>
+        </form>
+        <p class="muted" style="font-size:13px">※ ご本人確認（お名前・お預かり品の内容）を必ず行ってください。</p>
+        <div id="name-results" class="result-list mt"></div>
+      </details>
+    </section>
+
+    <!-- 2〜4. 照合とお渡し -->
+    <section id="deposit-view" hidden>
+      <div class="panel section">
+        <div class="row" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <div>
+            <div class="page-title" id="guest-name"></div>
+            <div class="muted" id="deposit-meta"></div>
+          </div>
+          <button class="btn" id="cancel-btn" type="button">別のお客様にする</button>
+        </div>
+        <div id="deposit-note" class="alert warn mt" hidden></div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <span class="num">II.</span><h2>荷物の照合</h2><span class="rule"></span>
+          <span class="aside" id="verify-count"></span>
+        </div>
+        <input id="tag-input" class="scan-input" type="text" autocomplete="off"
+               placeholder="棚から出した荷物のタグを読み取ってください">
+        <div class="item-cards mt" id="item-cards"></div>
+      </div>
+
+      <div class="section">
+        <div id="done-msg" class="alert ok" hidden><strong>すべてのお荷物をお渡ししました。</strong> ありがとうございました。</div>
+        <button class="btn btn-ok btn-big" id="return-btn" type="button" disabled>照合済みの荷物をお渡しする</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- 渡し間違い防止の警告 -->
+  <div class="big-alert" id="big-alert" hidden role="alertdialog" aria-labelledby="big-alert-title">
+    <div class="box">
+      <div class="icon">⛔</div>
+      <h2 id="big-alert-title">お渡ししないでください</h2>
+      <p id="big-alert-text"></p>
+      <button class="btn btn-big" id="big-alert-close" type="button">確認しました（閉じる）</button>
+    </div>
+  </div>
+
+  <script type="module" src="/js/checkout.js"></script>
+</body>
+</html>
