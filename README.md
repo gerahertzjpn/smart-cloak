@@ -26,6 +26,8 @@
 
 ```
 AGENTS.md        AIとメンバー向けのルール（最初に読む）
+CLAUDE.md        Claude Code 用（AGENTS.md を読み込む）
+GEMINI.md        Google Antigravity（Gemini）用の案内
 docs/guide.md    はじめてガイド：作業の流れと用語
 docs/db.md       データベースのテーブル定義
 docs/api.md      画面とサーバー間の取り決め
