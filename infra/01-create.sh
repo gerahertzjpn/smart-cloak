@@ -41,18 +41,19 @@ else
     --uniform-bucket-level-access --public-access-prevention
 fi
 
-echo "== 4/5 Cloud Run 用のサービスアカウントと権限"
-if gcloud iam service-accounts describe "$RUN_SA_EMAIL" >/dev/null 2>&1; then
-  echo "   作成済み：$RUN_SA_EMAIL"
-else
-  gcloud iam service-accounts create "$RUN_SA" --display-name="Smart Cloak (Cloud Run)"
-  sleep 10 # 作成直後は権限付与に失敗することがあるため少し待つ
-fi
-gcloud projects add-iam-policy-binding "$PROJECT_ID" \
-  --member="serviceAccount:$RUN_SA_EMAIL" --role=roles/cloudsql.client --condition=None >/dev/null
+echo "== 4/5 Cloud Run 用サービスアカウントの権限（$RUN_SA_EMAIL）"
 gcloud storage buckets add-iam-policy-binding "gs://$BUCKET" \
   --member="serviceAccount:$RUN_SA_EMAIL" --role=roles/storage.objectUser >/dev/null
-echo "   Cloud SQL クライアント、バケットの読み書きを付与しました"
+echo "   バケットの読み書きを付与しました"
+# プロジェクト全体の権限は、学生アカウントでは付与できないことがある（管理者に依頼）
+for role in roles/cloudsql.client roles/secretmanager.secretAccessor; do
+  if gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+       --member="serviceAccount:$RUN_SA_EMAIL" --role="$role" --condition=None >/dev/null 2>&1; then
+    echo "   $role を付与しました"
+  else
+    echo "   $role は権限がなく付与できません → 管理者に依頼（docs/deploy.md）"
+  fi
+done
 
 echo "== 5/5 完了"
 echo "次は DB のマイグレーション：bash infra/02-migrate.sh db/migrations/001_init.sql db/migrations/002_app_user.sql db/seed.sql"
