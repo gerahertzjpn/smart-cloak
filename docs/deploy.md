@@ -58,10 +58,11 @@ gcloud sql instances patch smart-cloak-db --activation-policy=ALWAYS   # 再開
 ```bash
 git clone https://github.com/gerahertzjpn/smart-cloak.git
 cd smart-cloak
-make create        # 1. API の有効化、Cloud SQL・DB・バケット・サービスアカウントと権限
+make check         # 0. 自分の権限を確認（何も変更しない）
+make create        # 1. API の有効化、Cloud SQL・DB・バケット・権限
 make migrate-init  # 2. 001・002 のマイグレーションと seed.sql（マスタ）を Cloud SQL に適用
-make secrets       # 3. app_user のパスワードとスタッフ用パスコードを入力（画面に表示されない）
-make deploy        # 4. ビルドして Cloud Run にデプロイ → URL が表示される
+make secrets       # 3. app_user のパスワードとスタッフ用パスコードを入力（画面に表示されない）※要管理者権限
+make deploy        # 4. ビルドして Cloud Run にデプロイ → URL が表示される ※要管理者権限
 ```
 
 - `make create` は作成済みのものをスキップするので、途中で失敗しても再実行できる。
@@ -81,8 +82,27 @@ make deploy        # 4. ビルドして Cloud Run にデプロイ → URL が表
 | `DB_PASSWORD`    | シークレット | `db-password`（latest）                                         |
 | `STAFF_PASSCODE` | シークレット | `staff-passcode`（latest）                                      |
 
-サービスアカウント `smart-cloak-run` の権限：Cloud SQL クライアント、
-バケットの Storage オブジェクト ユーザー、2つのシークレットのアクセサー。
+Cloud Run は既定のサービスアカウント `1062656635598-compute@developer.gserviceaccount.com` で動く。
+必要な権限：Cloud SQL クライアント、Secret Manager のシークレット アクセサー、
+バケットの Storage オブジェクト ユーザー（バケットの権限は `make create` が付与する）。
+
+## 管理者（先生）に依頼すること
+
+学生アカウントでは、Cloud SQL とバケットの操作はできるが、Cloud Run へのデプロイ、
+Secret Manager、プロジェクトの権限変更はできない（`make check` で確認できる）。
+デプロイする人のアカウントと、既定のサービスアカウントに次のロールが必要：
+
+| 対象                                                     | ロール                                   | 理由 |
+|----------------------------------------------------------|------------------------------------------|------|
+| デプロイする学生のアカウント                             | Cloud Run 管理者（`roles/run.admin`）    | サービスの作成・公開 |
+| 〃                                                       | Cloud Build 編集者（`roles/cloudbuild.builds.editor`） | ソースからのビルド |
+| 〃                                                       | Artifact Registry 管理者（`roles/artifactregistry.admin`） | ビルドしたイメージの保存先の作成 |
+| 〃                                                       | Secret Manager 管理者（`roles/secretmanager.admin`） | パスワードの安全な保存 |
+| `1062656635598-compute@developer.gserviceaccount.com`    | Cloud SQL クライアント（`roles/cloudsql.client`） | アプリから DB への接続 |
+| 〃                                                       | Secret Manager のシークレット アクセサー（`roles/secretmanager.secretAccessor`） | アプリがパスワードを読む |
+| 〃                                                       | Cloud Run ビルダー（`roles/run.builder`） | ソースからのビルド（Cloud Build が使う） |
+
+付与されたら `make check` で確認し、`make secrets` → `make deploy` を実行する。
 
 ## スキーマを変更したとき（新しいマイグレーション）
 
