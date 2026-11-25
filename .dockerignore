@@ -7,3 +7,4 @@ backend/.env
 backend/test
 docs
 *.md
+infra
