@@ -1,0 +1,20 @@
+# 秘密情報：絶対にリポジトリに入れない
+.env
+.env.*
+!.env.example
+*.pem
+*-key.json
+service-account*.json
+
+# 依存パッケージとビルド成果物
+node_modules/
+__pycache__/
+.venv/
+dist/
+build/
+
+# OS・エディタのファイル
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

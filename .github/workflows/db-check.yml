@@ -1,0 +1,62 @@
+# データベースの自動チェック（Pull Request ごと、および main への push 時）。
+# 空の PostgreSQL を起動し、マイグレーションを番号順に適用し、
+# テストデータを入れて db/tests/ のチェックを実行する。
+name: DB check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  db:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: smartcloak
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: ci-only-password
+      PGDATABASE: smartcloak
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 既存のマイグレーションが変更されていないか
+        if: github.event_name == 'pull_request'
+        run: |
+          changed=$(git diff --name-status "origin/${{ github.base_ref }}...HEAD" -- db/migrations | grep -v '^A' || true)
+          if [ -n "$changed" ]; then
+            echo "::error::既存のマイグレーションは変更・削除できません。新しいファイル 00N_*.sql を作成してください。"
+            echo "$changed"
+            exit 1
+          fi
+
+      - name: マイグレーションを適用
+        run: |
+          for f in $(ls db/migrations/*.sql | sort); do
+            echo "== $f"
+            psql -v ON_ERROR_STOP=1 -q -f "$f"
+          done
+
+      - name: テストデータを投入
+        run: psql -v ON_ERROR_STOP=1 -q -f db/seed.sql
+
+      - name: チェックを実行
+        run: |
+          psql -v ON_ERROR_STOP=1 -f db/tests/smoke.sql
+          psql -v ON_ERROR_STOP=1 -f db/tests/permissions.sql

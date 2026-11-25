@@ -1,0 +1,4 @@
+# チーム全員（Windows / Mac）で改行コードを統一する
+* text=auto eol=lf
+*.png binary
+*.jpg binary
