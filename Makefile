@@ -1,9 +1,13 @@
 # Google Cloud の操作（Cloud Shell で実行）。手順は docs/deploy.md を参照。
+#   make check         自分の権限を確認（何も変更しない）
 #   make create        初期構築（Cloud SQL・バケット・権限）
 #   make migrate-init  初期スキーマとマスタデータを Cloud SQL に適用
 #   make secrets       DBパスワードとスタッフ用パスコードを設定（自分で入力）
 #   make deploy        Cloud Run にデプロイ
-.PHONY: create migrate-init secrets deploy test
+.PHONY: check create migrate-init secrets deploy test
+
+check:
+	bash infra/check.sh
 
 create:
 	bash infra/01-create.sh
