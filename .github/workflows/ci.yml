@@ -1,7 +1,8 @@
-# データベースの自動チェック（Pull Request ごと、および main への push 時）。
+# 自動チェック（Pull Request ごと、および main への push 時）。
+# db：DB のマイグレーションとチェック ／ backend：サーバー（API）のテスト
 # 空の PostgreSQL を起動し、マイグレーションを番号順に適用し、
 # テストデータを入れて db/tests/ のチェックを実行する。
-name: DB check
+name: CI
 
 on:
   pull_request:
@@ -54,9 +55,48 @@ jobs:
           done
 
       - name: テストデータを投入
-        run: psql -v ON_ERROR_STOP=1 -q -f db/seed.sql
+        run: |
+          psql -v ON_ERROR_STOP=1 -q -f db/seed.sql
+          psql -v ON_ERROR_STOP=1 -q -f db/seed_test.sql
 
       - name: チェックを実行
         run: |
           psql -v ON_ERROR_STOP=1 -f db/tests/smoke.sql
           psql -v ON_ERROR_STOP=1 -f db/tests/permissions.sql
+
+  # サーバー（API）の自動テスト
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: 依存パッケージをインストール
+        run: npm ci
+      - name: API のテスト
+        run: npm test
+      - name: 脆弱性チェック（本番で使うパッケージ）
+        run: npm audit --omit=dev --audit-level=high
+
+  # Cloud Run 用のコンテナがビルドできるか
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: コンテナをビルド
+        run: docker build -t smart-cloak .
+      - name: 起動して /healthz に応答するか
+        run: |
+          docker run -d --name app -p 8080:8080 smart-cloak
+          for i in $(seq 1 20); do
+            if curl -fsS http://localhost:8080/healthz; then exit 0; fi
+            sleep 1
+          done
+          docker logs app
+          exit 1
